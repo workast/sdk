@@ -4,7 +4,7 @@ Pull requests are welcome. Keep them focused, match the style of the surrounding
 
 ## Setup
 
-Node.js 18+ (this repo’s `.nvmrc` is 20).
+Node.js 18+ (this repo’s `.nvmrc` is 24 for local/CI).
 
 ```sh
 nvm use
