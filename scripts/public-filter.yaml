@@ -1,0 +1,10 @@
+# Keep only Public-tagged operations, then drop unreferenced components.
+inverseTags:
+  - Public
+unusedComponents:
+  - schemas
+  - parameters
+  - requestBodies
+  - responses
+  - examples
+  - headers
