@@ -1,26 +1,38 @@
 {
   "name": "@workast/sdk",
-  "version": "2.3.0",
+  "version": "3.0.0-0",
   "description": "Workast SDK for JavaScript in the browser and Node.js",
-  "main": "lib/workast.js",
-  "types": "index.d.ts",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
   "files": [
-    "lib",
-    "dist",
-    "index.d.ts"
+    "dist"
   ],
   "scripts": {
-    "lint": "eslint --format compact .",
-    "test": "NODE_ENV=test nyc mocha 'test/**/*.spec.js'",
-    "coverage": "npm test && nyc report --reporter=text-lcov | coveralls",
-    "docs": "jsdoc -c jsdoc.json",
-    "build": "webpack",
-    "prepublishOnly": "npm run build",
-    "version": "node scripts/npm-version-hook.js"
+    "test": "vitest run",
+    "build": "tsup",
+    "generate:types": "node scripts/generate-types.mjs",
+    "prepublishOnly": "npm run build"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/workast/workast-sdk-js.git"
+    "url": "git+https://github.com/workast/sdk.git"
   },
   "keywords": [
     "workast",
@@ -30,47 +42,17 @@
   "author": "Workast <support@workast.com> (http://workast.com/)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/workast/workast-sdk-js/issues"
+    "url": "https://github.com/workast/sdk/issues"
   },
-  "homepage": "https://github.com/workast/workast-sdk-js#readme",
+  "homepage": "https://github.com/workast/sdk#readme",
   "engines": {
-    "node": ">=10.x",
-    "npm": ">=6.x"
+    "node": ">=18"
   },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead",
-    "maintained node versions"
-  ],
   "devDependencies": {
-    "@babel/core": "^7.8.6",
-    "@babel/plugin-transform-runtime": "^7.8.3",
-    "@babel/preset-env": "^7.8.6",
-    "babel-loader": "^8.1.0",
-    "chai": "^4.2.0",
-    "chai-as-promised": "^7.1.1",
-    "chance": "^1.1.6",
-    "clean-webpack-plugin": "^3.0.0",
-    "coveralls": "^3.1.0",
-    "eslint": "^7.5.0",
-    "eslint-config-airbnb-base": "^14.2.0",
-    "eslint-plugin-import": "^2.20.1",
-    "husky": "^4.2.3",
-    "mocha": "^8.0.1",
-    "nock": "^13.0.3",
-    "nthline": "^1.0.2",
-    "nyc": "^15.1.0",
-    "sinon": "^9.0.0",
-    "webpack": "^4.41.6",
-    "webpack-cli": "^3.3.11",
-    "webpack-node-externals": "^2.5.0"
-  },
-  "dependencies": {
-    "@babel/runtime": "^7.8.4",
-    "lodash.get": "^4.4.2",
-    "lodash.isobject": "^3.0.2",
-    "qs": "^6.9.4",
-    "superagent": "^5.2.2"
+    "openapi-format": "^1.33.6",
+    "openapi-typescript": "^7.13.0",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
   }
 }

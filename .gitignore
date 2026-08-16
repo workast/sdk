@@ -5,20 +5,15 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Coverage directory used by tools like istanbul
+# Coverage
 coverage/
-
-# nyc test coverage
-.nyc_output/
 
 # Dependency directories
 node_modules/
 
 # IDE
 .idea/
+.cursor/
 
-# Dist (Browser files)
+# Build
 dist/
-
-# Lib (UMD files)
-lib/
