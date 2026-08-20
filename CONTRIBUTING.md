@@ -13,7 +13,7 @@ npm test
 npm run build
 ```
 
-Regenerate API types after a Public swagger change:
+Regenerate API types and examples after a Public swagger change:
 
 ```sh
 npm run generate:types

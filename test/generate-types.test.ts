@@ -22,7 +22,7 @@ describe('generated types contract', () => {
   const swaggerPath = findSwagger();
 
   it.skipIf(!swaggerPath)(
-    'matches committed openapi.d.ts and generated.ts',
+    'matches committed openapi.d.ts, generated.ts, and examples.ts',
     async () => {
       const outDir = await mkdtemp(path.join(tmpdir(), 'workast-sdk-types-contract-'));
       try {
@@ -38,16 +38,14 @@ describe('generated types contract', () => {
           { cwd: REPO_ROOT },
         );
 
-        const [committedOpenapi, generatedOpenapi, committedGenerated, generatedGenerated] =
-          await Promise.all([
-            readFile(path.join(REPO_ROOT, 'src/types/openapi.d.ts'), 'utf8'),
-            readFile(path.join(outDir, 'openapi.d.ts'), 'utf8'),
-            readFile(path.join(REPO_ROOT, 'src/types/generated.ts'), 'utf8'),
-            readFile(path.join(outDir, 'generated.ts'), 'utf8'),
+        const files = ['openapi.d.ts', 'generated.ts', 'examples.ts'];
+        for (const file of files) {
+          const [committed, generated] = await Promise.all([
+            readFile(path.join(REPO_ROOT, 'src/types', file), 'utf8'),
+            readFile(path.join(outDir, file), 'utf8'),
           ]);
-
-        expect(generatedOpenapi).toBe(committedOpenapi);
-        expect(generatedGenerated).toBe(committedGenerated);
+          expect(generated).toBe(committed);
+        }
       } finally {
         await rm(outDir, { recursive: true, force: true });
       }

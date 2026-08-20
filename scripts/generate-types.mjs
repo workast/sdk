@@ -10,7 +10,8 @@
  * Default --out-dir: src/types
  *
  * Pipeline: openapi-format (Public filter) → tmp filtered spec →
- * openapi-typescript → <out-dir>/openapi.d.ts + <out-dir>/generated.ts.
+ * openapi-typescript → <out-dir>/openapi.d.ts + <out-dir>/generated.ts
+ * + composed success examples → <out-dir>/examples.ts.
  */
 import { createHash } from 'node:crypto';
 import { mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises';
@@ -19,6 +20,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import openapiTS, { astToString } from 'openapi-typescript';
+import { collectTypeExamples, emitExamplesSource } from './generate-examples.mjs';
 
 const require = createRequire(import.meta.url);
 const { parseFile, openapiFilter, writeFile: writeSpec } = require('openapi-format');
@@ -209,6 +211,7 @@ async function main() {
   const outDir = parseOutDirArg(argv);
   const openapiDts = path.join(outDir, 'openapi.d.ts');
   const generatedTs = path.join(outDir, 'generated.ts');
+  const examplesTs = path.join(outDir, 'examples.ts');
   const sourceBytes = await readFile(swaggerPath);
   const hash = createHash('sha256').update(sourceBytes).digest('hex');
 
@@ -239,7 +242,17 @@ async function main() {
   ].join('\n');
   await writeFile(generatedTs, generated);
 
-  process.stdout.write(`Wrote ${path.relative(REPO_ROOT, openapiDts)} and ${path.relative(REPO_ROOT, generatedTs)}\n`);
+  const collected = collectTypeExamples(filtered);
+  if (collected.gaps.length || collected.conflicts.length) {
+    throw new Error(
+      `Could not compose examples: ${JSON.stringify({ gaps: collected.gaps, conflicts: collected.conflicts })}`,
+    );
+  }
+  await writeFile(examplesTs, emitExamplesSource(collected.examples, hash));
+
+  process.stdout.write(
+    `Wrote ${path.relative(REPO_ROOT, openapiDts)}, ${path.relative(REPO_ROOT, generatedTs)}, and ${path.relative(REPO_ROOT, examplesTs)}\n`,
+  );
 }
 
 main().catch((error) => {

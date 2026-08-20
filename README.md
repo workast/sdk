@@ -89,6 +89,75 @@ try {
 
 Methods use `create` / `retrieve` / `update` / `list` / `del`, plus domain verbs like `complete` and `assign`. Path ids first, body second, request options last. Types match the [API reference](https://developers.workast.com/).
 
+## Testing
+
+`@workast/sdk/mock` stubs SDK methods on any `Workast` instance (including one your app already constructed). No real HTTP while a mock is active. It also exports `examples`: Public API response fixtures (`examples.task`, `examples.list`, `examples.userResource`, …) generated from the spec. Spread them in `.resolves()` and override the fields your test cares about.
+
+```ts
+import { Workast } from '@workast/sdk';
+import { examples, mockWorkast } from '@workast/sdk/mock';
+
+const workast = new Workast({ apiKey: process.env.WORKAST_API_KEY });
+
+async function createShipTask() {
+  return workast.tasks.create(examples.list.id, { text: examples.task.text });
+}
+
+const mock = mockWorkast();
+mock.tasks.create.on(examples.list.id, { text: examples.task.text }).resolves({
+  ...examples.task,
+  text: 'Ship from my test',
+});
+
+const created = await createShipTask();
+
+expect(created.text).toBe('Ship from my test');
+expect(mock.calls()).toEqual([
+  { method: 'tasks.create', args: [examples.list.id, { text: examples.task.text }] },
+]);
+```
+
+```ts
+mock.users.me.on().resolves({ ...examples.userResource, name: 'Ada Lovelace' });
+```
+
+`.on(...args)` is a prefix: extra trailing options on the real call still match. Nested objects match regardless of key order. Pass a function for a loose match (`true` → match):
+
+```ts
+mock.tasks.create.on(examples.list.id, (body) => body.text === examples.task.text).resolves({
+  ...examples.task,
+});
+```
+
+Queue errors with `.rejects()`. `errors.*` are the same classes the client throws:
+
+```ts
+import { AuthenticationError } from '@workast/sdk';
+import { errors } from '@workast/sdk/mock';
+
+mock.users.me.on().rejects(errors.unauthorized);
+await expect(workast.users.me()).rejects.toBeInstanceOf(AuthenticationError);
+```
+
+| Helper | Meaning |
+| --- | --- |
+| `mock.calls()` | Every SDK call while this mock is active (`{ method, args }`). |
+| `mock.pending()` | Interceptors that were not used. |
+| `interceptor.wasCalled()` | Whether that `.resolves()` / `.rejects()` fired. |
+| `mock.reset()` | Clear queue and calls. Stay intercepting. |
+| `mock.restore()` | Unpatch. Later SDK calls hit the real API. |
+
+One mock per test, or one shared mock and `reset()` between tests:
+
+```ts
+const mock = mockWorkast();
+
+afterEach(() => mock.reset());
+afterAll(() => mock.restore());
+```
+
+`mockWorkast()` last-wins: a second call replaces the active queue. Unmatched SDK methods throw and list pending interceptors.
+
 ## Upgrading from v2
 
 v3 is a rewrite. The v2 positional constructor, `apiCall`, and generated resource helpers are gone. A string argument is now a secret `apiKey` (server-only), not a session token.

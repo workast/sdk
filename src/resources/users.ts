@@ -1,9 +1,9 @@
 import type { Workast } from '../client.js';
 import type { RequestOptions } from '../request.js';
 import type {
-  Team,
   UserByEmailQuery,
   UserDetail,
+  UserDetailWithTeam,
   UserInvite,
   UserResource,
   UserSearchQuery,
@@ -97,7 +97,7 @@ export class Users {
     email: string,
     query?: UserByEmailQuery,
     options?: RequestOptions,
-  ): Promise<UserDetail & { team?: Team }> {
+  ): Promise<UserDetailWithTeam> {
     const params = new URLSearchParams(options?.query);
     if (query?.platform) {
       params.set('platform', query.platform);

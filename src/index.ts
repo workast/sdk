@@ -98,6 +98,7 @@ export type {
   User,
   UserByEmailQuery,
   UserDetail,
+  UserDetailWithTeam,
   UserInvite,
   UserResource,
   UserSearchQuery,

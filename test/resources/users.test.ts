@@ -1,8 +1,8 @@
 import { describe, expect, expectTypeOf, it } from 'vitest';
 import type {
-  Team,
   UserByEmailQuery,
   UserDetail,
+  UserDetailWithTeam,
   UserInvite,
   UserResource,
   UserSearchQuery,
@@ -23,7 +23,7 @@ const userResource: UserResource = {
   userName: 'ada',
   email,
 };
-const userByEmail: UserDetail & { team?: Team } = {
+const userByEmail: UserDetailWithTeam = {
   ...userDetail,
   team: { id: 'team-1', name: 'Workast' },
 };
@@ -120,7 +120,7 @@ describe('users.retrieve', () => {
 });
 
 describe('users.retrieveByEmail', () => {
-  it('GETs /user/email/{email} and returns UserDetail & { team?: Team }', async () => {
+  it('GETs /user/email/{email} and returns UserDetailWithTeam', async () => {
     const { client, fetch } = makeClient({ fetch: mockFetch(200, userByEmail) });
 
     const user = await client.users.retrieveByEmail(email);
@@ -147,11 +147,11 @@ describe('users.retrieveByEmail', () => {
     expect(request.body).toBeUndefined();
   });
 
-  it('types retrieveByEmail as (email: string, query?: UserByEmailQuery) => Promise<UserDetail & { team?: Team }>', () => {
+  it('types retrieveByEmail as (email: string, query?: UserByEmailQuery) => Promise<UserDetailWithTeam>', () => {
     const { client } = makeClient();
     expectTypeOf(client.users.retrieveByEmail).parameter(0).toEqualTypeOf<string>();
     expectTypeOf(client.users.retrieveByEmail).parameter(1).toEqualTypeOf<UserByEmailQuery | undefined>();
-    expectTypeOf(client.users.retrieveByEmail).returns.toEqualTypeOf<Promise<UserDetail & { team?: Team }>>();
+    expectTypeOf(client.users.retrieveByEmail).returns.toEqualTypeOf<Promise<UserDetailWithTeam>>();
   });
 });
 
