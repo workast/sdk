@@ -25,6 +25,7 @@ export class WorkflowsResource {
 
   /**
    * List workflows created by the logged-in user.
+   * Requires one of: `workflow:find` (least privilege) or `workflow:manage`.
    *
    * @example
    * const results = await workast.workflows.list({ limit: 10, skip: 0 });
@@ -35,6 +36,7 @@ export class WorkflowsResource {
 
   /**
    * Create a workflow.
+   * Requires `workflow:manage`.
    *
    * @example
    * const workflow = await workast.workflows.create({
@@ -50,6 +52,7 @@ export class WorkflowsResource {
 
   /**
    * Get a workflow by ID.
+   * Requires one of: `workflow:find` (least privilege) or `workflow:manage`.
    *
    * @example
    * const workflow = await workast.workflows.retrieve('workflow-id');
@@ -65,6 +68,7 @@ export class WorkflowsResource {
 
   /**
    * Update a workflow.
+   * Requires `workflow:manage`.
    *
    * @example
    * await workast.workflows.update('workflow-id', { prompt: 'Ship v3' });
@@ -80,6 +84,7 @@ export class WorkflowsResource {
 
   /**
    * Delete a workflow.
+   * Requires `workflow:manage`.
    *
    * @example
    * await workast.workflows.del('workflow-id');
@@ -95,6 +100,7 @@ export class WorkflowsResource {
 
   /**
    * Activate a workflow.
+   * Requires `workflow:manage`.
    *
    * @example
    * await workast.workflows.activate('workflow-id');
@@ -110,6 +116,7 @@ export class WorkflowsResource {
 
   /**
    * Deactivate a workflow.
+   * Requires `workflow:manage`.
    *
    * @example
    * await workast.workflows.deactivate('workflow-id');

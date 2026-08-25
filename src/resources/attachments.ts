@@ -7,6 +7,7 @@ export class Attachments {
 
   /**
    * Get a signed URL to download an attachment file.
+   * Requires `file:find`.
    *
    * @example
    * const attachment = await workast.attachments.retrieveFileUrl('attachment-id');

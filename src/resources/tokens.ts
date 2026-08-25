@@ -7,6 +7,7 @@ export class Tokens {
 
   /**
    * Get the token details.
+   * Requires any authenticated token (no specific scope).
    *
    * @example
    * const token = await workast.tokens.retrieve();

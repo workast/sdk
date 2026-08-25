@@ -7,6 +7,7 @@ class CalendarEventsResource {
 
   /**
    * List user calendar events.
+   * Requires `calendar:find`.
    *
    * @example
    * const results = await workast.calendar.events.list({ from: '2025-10-29', to: '2025-11-05' });

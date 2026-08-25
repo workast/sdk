@@ -7,6 +7,7 @@ export class Tags {
 
   /**
    * List tags in the team.
+   * Requires one of: `tag:find` (least privilege) or `tag:manage`.
    *
    * @example
    * const tags = await workast.tags.list({ listId: 'list-id' });
@@ -29,6 +30,7 @@ export class Tags {
 
   /**
    * Create a tag.
+   * Requires `tag:manage`.
    *
    * @example
    * const tag = await workast.tags.create({ name: 'Priority', color: '#ff0000' });
@@ -39,6 +41,7 @@ export class Tags {
 
   /**
    * Update a tag.
+   * Requires `tag:manage`.
    *
    * @example
    * const tag = await workast.tags.update('tag-id', { name: 'Priority' });
@@ -54,6 +57,7 @@ export class Tags {
 
   /**
    * Delete a tag.
+   * Requires `tag:manage`.
    *
    * @example
    * await workast.tags.del('tag-id');

@@ -20,6 +20,7 @@ class ListSublists {
 
   /**
    * List unique sublist names across lists.
+   * Requires one of: `list:find` (least privilege) or `list:manage`.
    *
    * @example
    * const names = await workast.lists.sublists.list({ types: ['group'] });
@@ -44,6 +45,7 @@ class ListSublists {
 
   /**
    * Create a sublist in a list.
+   * Requires one of: `list:create` (least privilege) or `list:manage`.
    *
    * @example
    * const sublist = await workast.lists.sublists.create('list-id', { name: 'To-do' });
@@ -59,6 +61,7 @@ class ListSublists {
 
   /**
    * Update a sublist.
+   * Requires one of: `list:update` (least privilege) or `list:manage`.
    *
    * @example
    * await workast.lists.sublists.update('list-id', 'sublist-id', { name: 'Done' });
@@ -79,6 +82,7 @@ class ListSublists {
 
   /**
    * Remove a sublist.
+   * Requires one of: `list:update` (least privilege) or `list:manage`.
    *
    * @example
    * await workast.lists.sublists.del('list-id', 'sublist-id');
@@ -98,6 +102,7 @@ class ListParticipantsResource {
 
   /**
    * List participants on a list.
+   * Requires one of: `list:participant:find` (least privilege) or `list:manage`.
    *
    * @example
    * const users = await workast.lists.participants.list('list-id');
@@ -113,6 +118,7 @@ class ListParticipantsResource {
 
   /**
    * Add participants to a list.
+   * Requires one of: `list:participant:manage` (least privilege) or `list:manage`.
    *
    * @example
    * await workast.lists.participants.add('list-id', { users: ['user-id'] });
@@ -128,6 +134,7 @@ class ListParticipantsResource {
 
   /**
    * Remove participants from a list.
+   * Requires one of: `list:participant:manage` (least privilege) or `list:manage`.
    *
    * @example
    * await workast.lists.participants.del('list-id', { users: ['user-id'] });
@@ -147,6 +154,7 @@ class ListFields {
 
   /**
    * Enable a custom field on a list.
+   * Requires `field:manage`.
    *
    * @example
    * await workast.lists.fields.enable('list-id', 'field-id');
@@ -162,6 +170,7 @@ class ListFields {
 
   /**
    * Disable a custom field on a list.
+   * Requires `field:manage`.
    *
    * @example
    * await workast.lists.fields.disable('list-id', 'field-id');
@@ -189,6 +198,7 @@ export class Lists {
 
   /**
    * Create a list.
+   * Requires one of: `list:create` (least privilege) or `list:manage`.
    *
    * @example
    * const list = await workast.lists.create({ name: 'Engineering' });
@@ -199,6 +209,7 @@ export class Lists {
 
   /**
    * Get a list by ID.
+   * Requires one of: `list:find` (least privilege) or `list:manage`.
    *
    * @example
    * const list = await workast.lists.retrieve('list-id');
@@ -209,6 +220,7 @@ export class Lists {
 
   /**
    * Update a list.
+   * Requires one of: `list:update` (least privilege) or `list:manage`.
    *
    * @example
    * await workast.lists.update('list-id', { name: 'Engineering' });
@@ -219,6 +231,7 @@ export class Lists {
 
   /**
    * Search lists.
+   * Requires one of: `list:find` (least privilege) or `list:manage`.
    *
    * @example
    * const lists = await workast.lists.list({ type: 'group', limit: 10 });
@@ -267,6 +280,7 @@ export class Lists {
 
   /**
    * Get the personal list.
+   * Requires one of: `list:find` (least privilege) or `list:manage`.
    *
    * @example
    * const list = await workast.lists.retrievePersonal();
@@ -277,6 +291,7 @@ export class Lists {
 
   /**
    * Archive a list.
+   * Requires `list:manage`.
    *
    * @example
    * await workast.lists.archive('list-id');
@@ -292,6 +307,7 @@ export class Lists {
 
   /**
    * Unarchive a list.
+   * Requires `list:manage`.
    *
    * @example
    * await workast.lists.unarchive('list-id');
@@ -307,6 +323,7 @@ export class Lists {
 
   /**
    * Join a list.
+   * Requires `list:join`.
    *
    * @example
    * await workast.lists.join('list-id');
@@ -322,6 +339,7 @@ export class Lists {
 
   /**
    * Request access to a private list.
+   * Requires `list:join`.
    *
    * @example
    * await workast.lists.requestAccess('list-id');
@@ -337,6 +355,7 @@ export class Lists {
 
   /**
    * Import a template into a list.
+   * Requires one of: `task:create` (least privilege) or `task:manage`.
    *
    * @example
    * await workast.lists.importTemplate('list-id', 'template-id', { updateDueDates: 30 });

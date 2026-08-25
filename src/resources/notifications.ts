@@ -10,6 +10,7 @@ export class NotificationsResource {
 
   /**
    * List notifications for the logged-in user.
+   * Requires one of: `notification:find` (least privilege) or `notification:manage`.
    *
    * @example
    * const results = await workast.notifications.list({ read: false, limit: 10 });
@@ -38,6 +39,7 @@ export class NotificationsResource {
 
   /**
    * Mark a notification as read.
+   * Requires `notification:manage`.
    *
    * @example
    * await workast.notifications.markRead('notification-id');
@@ -53,6 +55,7 @@ export class NotificationsResource {
 
   /**
    * Mark a notification as unread.
+   * Requires `notification:manage`.
    *
    * @example
    * await workast.notifications.markUnread('notification-id');

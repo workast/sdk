@@ -7,6 +7,7 @@ export class NotesResource {
 
   /**
    * List notes.
+   * Requires one of: `note:find` (least privilege) or `note:manage`.
    *
    * @example
    * const results = await workast.notes.list({ title: 'Spec', limit: 10 });
@@ -48,6 +49,7 @@ export class NotesResource {
 
   /**
    * Get a note by ID.
+   * Requires one of: `note:find` (least privilege) or `note:manage`.
    *
    * @example
    * const note = await workast.notes.retrieve('note-id');
@@ -58,6 +60,7 @@ export class NotesResource {
 
   /**
    * Update a note.
+   * Requires one of: `note:update` (least privilege) or `note:manage`.
    *
    * @example
    * const note = await workast.notes.update('note-id', { title: 'Spec', version: 1, body: '<p>Hello</p>' });
@@ -68,6 +71,7 @@ export class NotesResource {
 
   /**
    * Delete a note.
+   * Requires `note:manage`.
    *
    * @example
    * await workast.notes.del('note-id');

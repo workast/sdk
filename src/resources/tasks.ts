@@ -30,6 +30,7 @@ class TaskSubtasks {
 
   /**
    * Create a subtask on a task.
+   * Requires one of: `task:create` (least privilege) or `task:manage`.
    *
    * @example
    * const subtask = await workast.tasks.subtasks.create('task-id', { text: 'Write tests' });
@@ -44,6 +45,7 @@ class TaskDependencies {
 
   /**
    * Add a dependency to a task.
+   * Requires one of: `task:manage:dependency` (least privilege) or `task:manage`.
    *
    * @example
    * await workast.tasks.dependencies.add('task-id', 'dependency-id');
@@ -59,6 +61,7 @@ class TaskDependencies {
 
   /**
    * Remove a dependency from a task.
+   * Requires one of: `task:manage:dependency` (least privilege) or `task:manage`.
    *
    * @example
    * await workast.tasks.dependencies.del('task-id', 'dependency-id');
@@ -78,6 +81,7 @@ class TaskAttachments {
 
   /**
    * Create an attachment on a task.
+   * Requires one of: `task:manage:attachment` (least privilege) or `task:manage`.
    *
    * @example
    * const attachment = await workast.tasks.attachments.create('task-id', { author: 'user-id' });
@@ -88,6 +92,7 @@ class TaskAttachments {
 
   /**
    * Update a task attachment.
+   * Requires one of: `task:manage:attachment` (least privilege) or `task:manage`.
    *
    * @example
    * const attachment = await workast.tasks.attachments.update('task-id', 'attachment-id', { date: '2026-01-01' });
@@ -108,6 +113,7 @@ class TaskAttachments {
 
   /**
    * Delete a task attachment.
+   * Requires one of: `task:manage:attachment` (least privilege) or `task:manage`.
    *
    * @example
    * await workast.tasks.attachments.del('task-id', 'attachment-id');
@@ -127,6 +133,7 @@ class TaskActivitiesResource {
 
   /**
    * List activities on a task.
+   * Requires one of: `task:activity:find` (least privilege) or `task:manage`.
    *
    * @example
    * const results = await workast.tasks.activities.list('task-id', { type: ['comment'], limit: 10 });
@@ -166,6 +173,7 @@ class TaskActivitiesResource {
 
   /**
    * Create a comment activity on a task.
+   * Requires one of: `task:manage:activity` (least privilege) or `task:manage`.
    *
    * @example
    * const activity = await workast.tasks.activities.create('task-id', { type: 'comment', value: 'Looks good' });
@@ -176,6 +184,7 @@ class TaskActivitiesResource {
 
   /**
    * Update a task activity.
+   * Requires one of: `task:manage:activity` (least privilege) or `task:manage`.
    *
    * @example
    * await workast.tasks.activities.update('task-id', 'activity-id', { value: 'Updated comment' });
@@ -196,6 +205,7 @@ class TaskActivitiesResource {
 
   /**
    * Delete a task activity.
+   * Requires one of: `task:manage:activity` (least privilege) or `task:manage`.
    *
    * @example
    * await workast.tasks.activities.del('task-id', 'activity-id');
@@ -225,6 +235,7 @@ export class Tasks {
 
   /**
    * Create a task in a list.
+   * Requires one of: `task:create` (least privilege) or `task:manage`.
    *
    * @example
    * const task = await workast.tasks.create('list-id', { text: 'Ship v3' });
@@ -235,6 +246,7 @@ export class Tasks {
 
   /**
    * Get a task by ID.
+   * Requires one of: `task:find` (least privilege) or `task:manage`.
    *
    * @example
    * const task = await workast.tasks.retrieve('task-id');
@@ -245,6 +257,7 @@ export class Tasks {
 
   /**
    * Get a task by short ID.
+   * Requires one of: `task:find` (least privilege) or `task:manage`.
    *
    * @example
    * const task = await workast.tasks.retrieveByShortId('t4k1');
@@ -255,6 +268,7 @@ export class Tasks {
 
   /**
    * Update a task.
+   * Requires `task:manage`.
    *
    * @example
    * await workast.tasks.update('task-id', { text: 'Ship v3' });
@@ -265,6 +279,7 @@ export class Tasks {
 
   /**
    * Delete a task.
+   * Requires one of: `task:manage:remove` (least privilege) or `task:manage`.
    *
    * @example
    * await workast.tasks.del('task-id');
@@ -275,6 +290,7 @@ export class Tasks {
 
   /**
    * Search tasks.
+   * Requires one of: `task:find` (least privilege) or `task:manage`.
    *
    * @example
    * const results = await workast.tasks.list({
@@ -287,6 +303,7 @@ export class Tasks {
 
   /**
    * Complete a task.
+   * Requires one of: `task:manage:status` (least privilege) or `task:manage`.
    *
    * @example
    * await workast.tasks.complete('task-id');
@@ -297,6 +314,7 @@ export class Tasks {
 
   /**
    * Uncomplete a task.
+   * Requires one of: `task:manage:status` (least privilege) or `task:manage`.
    *
    * @example
    * await workast.tasks.uncomplete('task-id');
@@ -307,6 +325,7 @@ export class Tasks {
 
   /**
    * Assign users to a task.
+   * Requires one of: `task:manage:assignee` (least privilege) or `task:manage`.
    *
    * @example
    * await workast.tasks.assign('task-id', { users: ['user-id'] });
@@ -317,6 +336,7 @@ export class Tasks {
 
   /**
    * Unassign users from a task.
+   * Requires one of: `task:manage:assignee` (least privilege) or `task:manage`.
    *
    * @example
    * await workast.tasks.unassign('task-id', { users: ['user-id'] });
@@ -327,6 +347,7 @@ export class Tasks {
 
   /**
    * Add followers to a task.
+   * Requires `user:task:follow`.
    *
    * @example
    * await workast.tasks.follow('task-id', { users: ['user-id'] });
@@ -337,6 +358,7 @@ export class Tasks {
 
   /**
    * Remove followers from a task.
+   * Requires `user:task:follow`.
    *
    * @example
    * await workast.tasks.unfollow('task-id', { users: ['user-id'] });
@@ -347,6 +369,7 @@ export class Tasks {
 
   /**
    * Move tasks to another list.
+   * Requires one of: `task:manage:move` (least privilege) or `task:manage`.
    *
    * @example
    * await workast.tasks.move('list-id', { tasks: ['task-id'], target: 'other-list-id' });
@@ -357,6 +380,7 @@ export class Tasks {
 
   /**
    * Create many tasks in a list.
+   * Requires one of: `task:create` (least privilege) or `task:manage`.
    *
    * @example
    * await workast.tasks.createMany('list-id', [{ text: 'One' }, { text: 'Two' }]);
@@ -367,6 +391,7 @@ export class Tasks {
 
   /**
    * Update many tasks.
+   * Requires `task:manage`.
    *
    * @example
    * const result = await workast.tasks.updateMany({ tasks: ['task-id'], status: 'done' });
@@ -377,6 +402,7 @@ export class Tasks {
 
   /**
    * List home (favourite) tasks.
+   * Requires one of: `home:task:find` (least privilege) or `home:task:manage`.
    *
    * @example
    * const home = await workast.tasks.listHome();
@@ -387,6 +413,7 @@ export class Tasks {
 
   /**
    * Add a task to the home screen.
+   * Requires `home:task:manage`.
    *
    * @example
    * await workast.tasks.addHome('task-id');
@@ -397,6 +424,7 @@ export class Tasks {
 
   /**
    * Remove a task from the home screen.
+   * Requires `home:task:manage`.
    *
    * @example
    * await workast.tasks.removeHome('task-id');
@@ -407,6 +435,7 @@ export class Tasks {
 
   /**
    * Add tags to a task.
+   * Requires one of: `task:manage:tag` (least privilege) or `task:manage`.
    *
    * @example
    * await workast.tasks.addTag('task-id', { tags: ['tag-id'] });
@@ -417,6 +446,7 @@ export class Tasks {
 
   /**
    * Remove tags from a task.
+   * Requires one of: `task:manage:tag` (least privilege) or `task:manage`.
    *
    * @example
    * await workast.tasks.removeTag('task-id', { tags: ['tag-id'] });
@@ -427,6 +457,7 @@ export class Tasks {
 
   /**
    * Convert a task into a subtask of another task.
+   * Requires `task:manage`.
    *
    * @example
    * await workast.tasks.convertToSubtask('task-id', { parentTaskId: 'parent-id' });
@@ -442,6 +473,7 @@ export class Tasks {
 
   /**
    * Convert a subtask into a standalone task.
+   * Requires `task:manage`.
    *
    * @example
    * const task = await workast.tasks.convertToTask('task-id');

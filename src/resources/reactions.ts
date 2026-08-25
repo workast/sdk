@@ -7,6 +7,7 @@ export class Reactions {
 
   /**
    * Add a reaction to an activity.
+   * Requires one of: `activity:react` (least privilege) or `task:manage`.
    *
    * @example
    * const reaction = await workast.reactions.add('activity-id', { emoji: ':+1:' });
@@ -26,6 +27,7 @@ export class Reactions {
 
   /**
    * Remove a reaction from an activity.
+   * Requires one of: `activity:react` (least privilege) or `task:manage`.
    *
    * @example
    * await workast.reactions.del('activity-id', 'reaction-id');

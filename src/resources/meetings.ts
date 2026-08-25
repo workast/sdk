@@ -16,6 +16,7 @@ export class MeetingsResource {
 
   /**
    * List meetings.
+   * Requires one of: `meeting:find` (least privilege) or `meeting:manage`.
    *
    * @example
    * const results = await workast.meetings.list({ timeMin: '2026-01-01T00:00:00Z', maxResults: 15 });
@@ -49,6 +50,7 @@ export class MeetingsResource {
 
   /**
    * Create a meeting from a calendar event, or create a new calendar event.
+   * Requires `meeting:manage`.
    *
    * @example
    * const meeting = await workast.meetings.createFromEvent({
@@ -63,6 +65,7 @@ export class MeetingsResource {
 
   /**
    * Get a meeting by ID.
+   * Requires one of: `meeting:find` (least privilege) or `meeting:manage`.
    *
    * @example
    * const meeting = await workast.meetings.retrieve('meeting-id');
@@ -73,6 +76,7 @@ export class MeetingsResource {
 
   /**
    * Update meeting notes.
+   * Requires `meeting:manage`.
    *
    * @example
    * const meeting = await workast.meetings.update('meeting-id', { notes: 'Ship v3' });
@@ -83,6 +87,7 @@ export class MeetingsResource {
 
   /**
    * Get meeting recording assets and transcript.
+   * Requires one of: `meeting:find` (least privilege) or `meeting:manage`.
    *
    * @example
    * const recording = await workast.meetings.retrieveRecording('meeting-id');
@@ -98,6 +103,7 @@ export class MeetingsResource {
 
   /**
    * Enable the notetaker for a meeting.
+   * Requires `meeting:manage`.
    *
    * @example
    * const meeting = await workast.meetings.enableNotetaker('meeting-id', {
@@ -119,6 +125,7 @@ export class MeetingsResource {
 
   /**
    * Disable or remove the notetaker from a meeting.
+   * Requires `meeting:manage`.
    *
    * @example
    * const meeting = await workast.meetings.disableNotetaker('meeting-id');

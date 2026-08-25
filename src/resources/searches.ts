@@ -17,6 +17,7 @@ export class SearchesResource {
 
   /**
    * List searches for the logged-in user.
+   * Requires one of: `search:find` (least privilege) or `search:manage`.
    *
    * @example
    * const results = await workast.searches.list({ home: true, limit: 10 });
@@ -45,6 +46,7 @@ export class SearchesResource {
 
   /**
    * Create a search.
+   * Requires `search:manage`.
    *
    * @example
    * const search = await workast.searches.create({
@@ -58,6 +60,7 @@ export class SearchesResource {
 
   /**
    * Get a search by ID.
+   * Requires one of: `search:find` (least privilege) or `search:manage`.
    *
    * @example
    * const search = await workast.searches.retrieve('search-id');
@@ -86,6 +89,7 @@ export class SearchesResource {
 
   /**
    * Update a search.
+   * Requires `search:manage`.
    *
    * @example
    * const search = await workast.searches.update('search-id', { name: 'Updated' });
@@ -101,6 +105,7 @@ export class SearchesResource {
 
   /**
    * Delete a search.
+   * Requires `search:manage`.
    *
    * @example
    * await workast.searches.del('search-id');
@@ -116,6 +121,7 @@ export class SearchesResource {
 
   /**
    * Add a search to the home screen.
+   * Requires `home:search:manage`.
    *
    * @example
    * await workast.searches.addHome('search-id');
@@ -131,6 +137,7 @@ export class SearchesResource {
 
   /**
    * Remove a search from the home screen.
+   * Requires `home:search:manage`.
    *
    * @example
    * await workast.searches.removeHome('search-id');
@@ -146,6 +153,7 @@ export class SearchesResource {
 
   /**
    * Share a search with users.
+   * Requires `search:manage`.
    *
    * @example
    * await workast.searches.share('search-id', { users: ['user-id'] });
@@ -161,6 +169,7 @@ export class SearchesResource {
 
   /**
    * Unshare a search from users.
+   * Requires `search:manage`.
    *
    * @example
    * await workast.searches.unshare('search-id', { users: ['user-id'] });
@@ -176,6 +185,7 @@ export class SearchesResource {
 
   /**
    * Set a reminder on a search.
+   * Requires `search:manage`.
    *
    * @example
    * await workast.searches.setReminder('search-id', {
@@ -193,6 +203,7 @@ export class SearchesResource {
 
   /**
    * Delete a reminder from a search.
+   * Requires `search:manage`.
    *
    * @example
    * await workast.searches.delReminder('search-id');

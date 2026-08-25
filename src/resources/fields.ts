@@ -12,6 +12,7 @@ export class Fields {
 
   /**
    * List custom fields in the team.
+   * Requires one of: `field:find` (least privilege) or `field:manage`.
    *
    * @example
    * const fields = await workast.fields.list({ listId: 'list-id' });
@@ -31,6 +32,7 @@ export class Fields {
 
   /**
    * Create a custom field.
+   * Requires `field:manage`.
    *
    * @example
    * const field = await workast.fields.create({ name: 'Priority', type: 'text' });
@@ -41,6 +43,7 @@ export class Fields {
 
   /**
    * Update a custom field.
+   * Requires `field:manage`.
    *
    * @example
    * const field = await workast.fields.update('field-id', { name: 'Priority' });
@@ -56,6 +59,7 @@ export class Fields {
 
   /**
    * Remove a custom field.
+   * Requires `field:manage`.
    *
    * @example
    * await workast.fields.del('field-id');

@@ -31,6 +31,7 @@ export class Users {
 
   /**
    * Get the logged-in user.
+   * Requires any authenticated token (no specific scope).
    *
    * @example
    * const me = await workast.users.me();
@@ -41,6 +42,7 @@ export class Users {
 
   /**
    * List users in the team.
+   * Requires one of: `user:find` (least privilege) or `user:manage`.
    *
    * @example
    * const users = await workast.users.list({ name: 'Ada', limit: 10 });
@@ -79,6 +81,7 @@ export class Users {
 
   /**
    * Get a user by ID.
+   * Requires one of: `user:find` (least privilege) or `user:manage`.
    *
    * @example
    * const user = await workast.users.retrieve('user-id');
@@ -89,6 +92,7 @@ export class Users {
 
   /**
    * Get a user by email.
+   * Requires one of: `user:find` (least privilege) or `user:manage`.
    *
    * @example
    * const user = await workast.users.retrieveByEmail('ada@example.com');
@@ -112,6 +116,7 @@ export class Users {
 
   /**
    * Invite a user to the team.
+   * Requires one of: `user:invite` (least privilege) or `user:manage`.
    *
    * @example
    * const user = await workast.users.invite({ name: 'Ada', email: 'ada@example.com', role: 'member' });
