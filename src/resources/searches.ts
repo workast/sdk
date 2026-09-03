@@ -5,6 +5,7 @@ import type {
   SearchCreate,
   SearchDetail,
   SearchFindQuery,
+  FindHomeSearchesQuery,
   SearchPatch,
   SearchReminderSet,
   SearchRetrieveQuery,
@@ -20,7 +21,7 @@ export class SearchesResource {
    * Requires one of: `search:find` (least privilege) or `search:manage`.
    *
    * @example
-   * const results = await workast.searches.list({ home: true, limit: 10 });
+   * const results = await workast.searches.list({ limit: 10 });
    */
   list(query?: SearchFindQuery, options?: RequestOptions): Promise<Searches> {
     const params = new URLSearchParams(options?.query);
@@ -32,9 +33,6 @@ export class SearchesResource {
     }
     if (query?.sort) {
       params.set('sort', query.sort);
-    }
-    if (query?.home != null) {
-      params.set('home', String(query.home));
     }
     return this.client.request(
       'GET',
@@ -116,6 +114,29 @@ export class SearchesResource {
       `/search/${encodeURIComponent(searchId)}`,
       undefined,
       options,
+    );
+  }
+
+  /**
+   * List searches pinned on the home screen.
+   * Requires one of: `home:search:find` (least privilege) or `home:search:manage`.
+   *
+   * @example
+   * const results = await workast.searches.listHome({ limit: 10 });
+   */
+  listHome(query?: FindHomeSearchesQuery, options?: RequestOptions): Promise<Searches> {
+    const params = new URLSearchParams(options?.query);
+    if (query?.limit != null) {
+      params.set('limit', String(query.limit));
+    }
+    if (query?.skip != null) {
+      params.set('skip', String(query.skip));
+    }
+    return this.client.request(
+      'GET',
+      '/search/home',
+      undefined,
+      params.toString() ? { ...options, query: params } : options,
     );
   }
 
