@@ -4,6 +4,7 @@ import type {
   SearchCreate,
   SearchDetail,
   SearchFindQuery,
+  FindHomeSearchesQuery,
   SearchPatch,
   SearchReminderSet,
   SearchRetrieveQuery,
@@ -31,7 +32,6 @@ describe('searches.list', () => {
       limit: 10,
       skip: 5,
       sort: '-createdAt',
-      home: true,
     };
 
     const results = await client.searches.list(query);
@@ -39,7 +39,7 @@ describe('searches.list', () => {
     const request = getRequest(fetch);
     expect(request.method).toBe('GET');
     expect(request.url).toBe(
-      `${DEFAULT_BASE_URL}/search?limit=10&skip=5&sort=-createdAt&home=true`,
+      `${DEFAULT_BASE_URL}/search?limit=10&skip=5&sort=-createdAt`,
     );
     expect(request.body).toBeUndefined();
     expect(request.headers.get('Authorization')).toBe('Bearer test-api-key');
@@ -168,6 +168,39 @@ describe('searches.del', () => {
     const { client } = makeClient();
     expectTypeOf(client.searches.del).parameter(0).toEqualTypeOf<string>();
     expectTypeOf(client.searches.del).returns.toEqualTypeOf<Promise<void>>();
+  });
+});
+
+describe('searches.listHome', () => {
+  it('GETs /search/home with query and returns Searches', async () => {
+    const { client, fetch } = makeClient({ fetch: mockFetch(200, listed) });
+    const query: FindHomeSearchesQuery = { limit: 10, skip: 5 };
+
+    const results = await client.searches.listHome(query);
+
+    const request = getRequest(fetch);
+    expect(request.method).toBe('GET');
+    expect(request.url).toBe(`${DEFAULT_BASE_URL}/search/home?limit=10&skip=5`);
+    expect(request.body).toBeUndefined();
+    expect(request.headers.get('Authorization')).toBe('Bearer test-api-key');
+    expect(results).toEqual(listed);
+  });
+
+  it('GETs /search/home without query', async () => {
+    const { client, fetch } = makeClient({ fetch: mockFetch(200, listed) });
+
+    await client.searches.listHome();
+
+    const request = getRequest(fetch);
+    expect(request.method).toBe('GET');
+    expect(request.url).toBe(`${DEFAULT_BASE_URL}/search/home`);
+    expect(request.body).toBeUndefined();
+  });
+
+  it('types listHome as (query?: FindHomeSearchesQuery) => Promise<Searches>', () => {
+    const { client } = makeClient();
+    expectTypeOf(client.searches.listHome).parameter(0).toEqualTypeOf<FindHomeSearchesQuery | undefined>();
+    expectTypeOf(client.searches.listHome).returns.toEqualTypeOf<Promise<Searches>>();
   });
 });
 

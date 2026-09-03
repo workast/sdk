@@ -245,6 +245,17 @@ export class Tasks {
   }
 
   /**
+   * Create a task in the personal list.
+   * Requires one of: `task:create` (least privilege) or `task:manage`.
+   *
+   * @example
+   * const task = await workast.tasks.createPersonal({ text: 'Ship v3' });
+   */
+  createPersonal(body: TaskCreate, options?: RequestOptions): Promise<Task> {
+    return this.client.request('POST', '/list/personal/task', body, options);
+  }
+
+  /**
    * Get a task by ID.
    * Requires one of: `task:find` (least privilege) or `task:manage`.
    *

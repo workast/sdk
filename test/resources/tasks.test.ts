@@ -105,6 +105,69 @@ describe('tasks.create', () => {
   });
 });
 
+describe('tasks.createPersonal', () => {
+  it('POSTs TaskCreate to /list/personal/task and returns Task', async () => {
+    const { client, fetch } = makeClient();
+    const body: TaskCreate = { text: 'Ship v3' };
+
+    const task = await client.tasks.createPersonal(body);
+
+    const request = getRequest(fetch);
+    expect(request.method).toBe('POST');
+    expect(request.url).toBe(`${DEFAULT_BASE_URL}/list/personal/task`);
+    expect(request.body).toEqual(body);
+    expect(request.headers.get('Authorization')).toBe('Bearer test-api-key');
+    expect(request.headers.get('Content-Type')).toBe('application/json');
+    expect(task).toEqual(createdTask);
+  });
+
+  it('uses a custom baseUrl', async () => {
+    const { client, fetch } = makeClient({ baseUrl: 'https://api.example.test' });
+    await client.tasks.createPersonal({ text: 'Hi' });
+    expect(getRequest(fetch).url).toBe('https://api.example.test/list/personal/task');
+  });
+
+  it('types createPersonal as (body: TaskCreate) => Promise<Task>', () => {
+    const { client } = makeClient();
+    expectTypeOf(client.tasks.createPersonal).parameter(0).toEqualTypeOf<TaskCreate>();
+    expectTypeOf(client.tasks.createPersonal).returns.toEqualTypeOf<Promise<Task>>();
+  });
+
+  it('throws AuthenticationError on 401', async () => {
+    const fetch = mockFetch();
+    fetch.mockResolvedValueOnce(jsonResponse(401, {
+      error: { name: 'UserUnauthorizedError', message: 'User unauthorized' },
+    }));
+    const { client } = makeClient({ fetch });
+    await expect(client.tasks.createPersonal({ text: 'Hi' }))
+      .rejects
+      .toBeInstanceOf(AuthenticationError);
+  });
+
+  it('throws ValidationError on 400', async () => {
+    const fetch = mockFetch();
+    fetch.mockResolvedValueOnce(jsonResponse(400, {
+      error: 'Bad request.',
+      message: 'text is required',
+    }));
+    const { client } = makeClient({ fetch });
+    await expect(client.tasks.createPersonal({ text: 'Hi' }))
+      .rejects
+      .toBeInstanceOf(ValidationError);
+  });
+
+  it('throws PermissionError on 403', async () => {
+    const fetch = mockFetch();
+    fetch.mockResolvedValueOnce(jsonResponse(403, {
+      error: { name: 'SpaceAccessDeniedError', message: 'Access to this space is forbidden' },
+    }));
+    const { client } = makeClient({ fetch });
+    await expect(client.tasks.createPersonal({ text: 'Hi' }))
+      .rejects
+      .toBeInstanceOf(PermissionError);
+  });
+});
+
 describe('tasks.retrieve', () => {
   it('GETs /task/{taskId} and returns Task', async () => {
     const fetch = mockFetch(200, createdTask);

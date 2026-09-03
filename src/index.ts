@@ -59,6 +59,7 @@ export type {
   SearchCreate,
   SearchDetail,
   SearchFindQuery,
+  FindHomeSearchesQuery,
   SearchItem,
   SearchPatch,
   SearchPayload,
