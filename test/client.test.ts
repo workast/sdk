@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { Workast } from '../src/index.js';
+import { TimeoutError, Workast } from '../src/index.js';
 import { API_KEY, DEFAULT_BASE_URL, getRequest, makeClient, mockFetch } from './helpers.js';
 
 const listId = 'list-1';
@@ -126,5 +126,94 @@ describe('Workast baseUrl', () => {
     const { client, fetch } = makeClient();
     await client.tasks.create(listId, body);
     expect(getRequest(fetch).url).toBe(`${DEFAULT_BASE_URL}/list/${listId}/task`);
+  });
+});
+
+describe('Workast timeout', () => {
+  function hungUntilAbort(): ReturnType<typeof mockFetch> {
+    return vi.fn(async (_input, init) => {
+      const signal = init?.signal;
+      if (!signal) {
+        return new Promise(() => {});
+      }
+      if (signal.aborted) {
+        throw signal.reason;
+      }
+      await new Promise<never>((_, reject) => {
+        signal.addEventListener('abort', () => reject(signal.reason));
+      });
+    });
+  }
+
+  it('passes AbortSignal.timeout(30000) as the fetch signal by default', async () => {
+    const { client, fetch } = makeClient();
+    const timeoutSpy = vi.spyOn(AbortSignal, 'timeout');
+    await client.tasks.create(listId, body);
+    expect(timeoutSpy).toHaveBeenCalledWith(30_000);
+    expect(getRequest(fetch).signal).toBe(timeoutSpy.mock.results[0].value);
+    timeoutSpy.mockRestore();
+  });
+
+  it('rejects with TimeoutError when the constructor timeout elapses', async () => {
+    const { client } = makeClient({ timeout: 50, fetch: hungUntilAbort() });
+    await expect(client.tasks.create(listId, body)).rejects.toBeInstanceOf(TimeoutError);
+  });
+
+  it('does not call AbortSignal.timeout or pass a signal when timeout is 0', async () => {
+    const { client, fetch } = makeClient({ timeout: 0 });
+    const timeoutSpy = vi.spyOn(AbortSignal, 'timeout');
+    await client.tasks.create(listId, body);
+    expect(timeoutSpy).not.toHaveBeenCalled();
+    expect(getRequest(fetch).signal).toBeUndefined();
+    timeoutSpy.mockRestore();
+  });
+
+  it('uses AbortSignal.timeout(30000) with the string shorthand constructor', async () => {
+    vi.stubGlobal('fetch', mockFetch());
+    const client = new Workast(API_KEY);
+    const timeoutSpy = vi.spyOn(AbortSignal, 'timeout');
+    await client.tasks.create(listId, body);
+    expect(timeoutSpy).toHaveBeenCalledWith(30_000);
+    timeoutSpy.mockRestore();
+  });
+
+  it('withHeaders clone still times out using the constructor timeout', async () => {
+    const { client } = makeClient({ timeout: 50, fetch: hungUntilAbort() });
+    const clone = client.withHeaders({ 'X-A': '1' });
+    await expect(clone.tasks.create(listId, body)).rejects.toBeInstanceOf(TimeoutError);
+  });
+
+  it('lets per-request options.timeout override the client timeout', async () => {
+    const { client: defaultClient } = makeClient({ fetch: hungUntilAbort() });
+    await expect(defaultClient.tasks.create(listId, body, { timeout: 50 }))
+      .rejects.toBeInstanceOf(TimeoutError);
+
+    const { client, fetch } = makeClient({ timeout: 50 });
+    const timeoutSpy = vi.spyOn(AbortSignal, 'timeout');
+    await client.tasks.create(listId, body, { timeout: 0 });
+    expect(timeoutSpy).not.toHaveBeenCalled();
+    expect(getRequest(fetch).signal).toBeUndefined();
+    timeoutSpy.mockRestore();
+  });
+
+  it('rejects with TimeoutError when the response body is still reading after abort', async () => {
+    const fetch = vi.fn(async (_input, init) => ({
+      ok: true,
+      status: 201,
+      async text() {
+        const signal = init?.signal;
+        if (!signal) {
+          return new Promise(() => {});
+        }
+        if (signal.aborted) {
+          throw signal.reason;
+        }
+        await new Promise<never>((_, reject) => {
+          signal.addEventListener('abort', () => reject(signal.reason));
+        });
+      },
+    }));
+    const { client } = makeClient({ timeout: 50, fetch });
+    await expect(client.tasks.create(listId, body)).rejects.toBeInstanceOf(TimeoutError);
   });
 });

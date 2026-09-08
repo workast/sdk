@@ -15,11 +15,13 @@ import { Users } from './resources/users.js';
 import { WorkflowsResource } from './resources/workflows.js';
 
 const DEFAULT_BASE_URL = 'https://api.workast.com';
+const DEFAULT_TIMEOUT_MS = 30_000;
 
 type WorkastConfig = {
   baseUrl?: string;
   headers?: Record<string, string>;
   fetch?: typeof fetch;
+  timeout?: number;
 };
 
 export type WorkastAuth =
@@ -50,6 +52,7 @@ export class Workast {
   private readonly getTokenFn?: () => string | Promise<string>;
   private readonly baseUrl: string;
   private readonly fetchFn: typeof fetch;
+  private readonly timeout: number;
   private headers: Record<string, string>;
 
   constructor(options: string | WorkastOptions) {
@@ -72,6 +75,7 @@ export class Workast {
 
     this.baseUrl = opts.baseUrl ?? DEFAULT_BASE_URL;
     this.fetchFn = opts.fetch ?? globalThis.fetch.bind(globalThis);
+    this.timeout = opts.timeout ?? DEFAULT_TIMEOUT_MS;
     this.headers = withoutAuthorization(opts.headers);
     this.attachments = new Attachments(this);
     this.calendar = new CalendarResource(this);
@@ -94,6 +98,7 @@ export class Workast {
       ...this.authOptions(),
       baseUrl: this.baseUrl,
       fetch: this.fetchFn,
+      timeout: this.timeout,
       headers: { ...this.headers, ...withoutAuthorization(headers) },
     });
   }
@@ -111,6 +116,7 @@ export class Workast {
       baseUrl: this.baseUrl,
       headers: this.headers,
       fetch: this.fetchFn,
+      timeout: this.timeout,
       resolveAuth: () => this.resolveAuth(),
     };
   }

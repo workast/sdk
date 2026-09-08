@@ -38,6 +38,16 @@ export class ValidationError extends ApiError {
   }
 }
 
+export class TimeoutError extends Error {
+  readonly timeout: number;
+
+  constructor(timeout: number) {
+    super(`Request timed out after ${timeout}ms`);
+    this.name = 'TimeoutError';
+    this.timeout = timeout;
+  }
+}
+
 export function errorFromResponse(status: number, body: unknown): ApiError {
   const message = messageFromBody(body) ?? `Request failed with status ${status}`;
   switch (status) {
