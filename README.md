@@ -46,6 +46,7 @@ const workast = new Workast({ getToken: () => auth.getAccessToken() });
 | `baseUrl` | API host. Defaults to `https://api.workast.com`. |
 | `headers` | Extra headers (for example `W-USER-ID`, `W-TEAM-ID`). `Authorization` is set by the client. |
 | `fetch` | Custom `fetch` implementation. |
+| `timeout` | Request timeout in milliseconds. Defaults to `30000`. `0` disables the timeout. |
 
 `withHeaders(h)` returns a cloned client. `setHeaders(h)` updates the current one.
 
@@ -70,6 +71,8 @@ Failed requests throw a subclass of `ApiError`:
 | 403 | `PermissionError` |
 | 404 | `NotFoundError` |
 | other | `ApiError` |
+
+`TimeoutError` has no HTTP status. It is thrown when the request exceeds `timeout`.
 
 ```ts
 import { NotFoundError } from '@workast/sdk';

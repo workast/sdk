@@ -34,6 +34,7 @@ export function makeClient(options: {
   getToken?: () => string | Promise<string>;
   baseUrl?: string;
   headers?: Record<string, string>;
+  timeout?: number;
   fetch?: typeof fetch;
 } = {}): {
   client: Workast;
@@ -66,5 +67,6 @@ export function getRequest(fetchMock: MockFetch, index = -1) {
     method: init?.method ?? 'GET',
     headers: new Headers(init?.headers),
     body: init?.body ? JSON.parse(String(init.body)) : undefined,
+    signal: init?.signal,
   };
 }

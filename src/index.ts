@@ -5,6 +5,7 @@ export {
   AuthenticationError,
   NotFoundError,
   PermissionError,
+  TimeoutError,
   ValidationError,
 } from './errors.js';
 export type {
