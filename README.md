@@ -72,6 +72,20 @@ Failed requests throw a subclass of `ApiError`:
 | 404 | `NotFoundError` |
 | other | `ApiError` |
 
+When the API body is `{ error: { name, message } }` and `name` is `TeamDeactivatedError`, `UserDeactivatedError`, `UserSuspendedError`, or `TeamSuspendedError`, the SDK throws `AccountError` instead. `AccountError` extends `ApiError`. It has `reason` (the API `name`) and `message` (the API `message`).
+
+```ts
+import { AccountError } from '@workast/sdk';
+
+try {
+  await workast.tasks.retrieve(taskId);
+} catch (err) {
+  if (err instanceof AccountError) {
+    console.log(err.reason, err.message, err.status);
+  }
+}
+```
+
 `TimeoutError` has no HTTP status. It is thrown when the request exceeds `timeout`.
 
 ```ts

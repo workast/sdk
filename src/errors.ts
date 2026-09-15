@@ -10,6 +10,27 @@ export class ApiError extends Error {
   }
 }
 
+export type AccountErrorReason =
+  | 'TeamDeactivatedError'
+  | 'UserDeactivatedError'
+  | 'UserSuspendedError'
+  | 'TeamSuspendedError';
+
+export class AccountError extends ApiError {
+  readonly reason: AccountErrorReason;
+
+  constructor(
+    message: string,
+    status: number,
+    body: unknown,
+    reason: AccountErrorReason,
+  ) {
+    super(message, status, body);
+    this.name = 'AccountError';
+    this.reason = reason;
+  }
+}
+
 export class AuthenticationError extends ApiError {
   constructor(message: string, status = 401, body?: unknown) {
     super(message, status, body);
@@ -50,6 +71,15 @@ export class TimeoutError extends Error {
 
 export function errorFromResponse(status: number, body: unknown): ApiError {
   const message = messageFromBody(body) ?? `Request failed with status ${status}`;
+  const name = nameFromBody(body);
+  if (
+    name === 'TeamDeactivatedError'
+    || name === 'UserDeactivatedError'
+    || name === 'UserSuspendedError'
+    || name === 'TeamSuspendedError'
+  ) {
+    return new AccountError(message, status, body, name);
+  }
   switch (status) {
     case 400:
       return new ValidationError(message, status, body);
@@ -80,6 +110,20 @@ function messageFromBody(body: unknown): string | undefined {
   }
   if (typeof message === 'string') {
     return message;
+  }
+  return undefined;
+}
+
+function nameFromBody(body: unknown): string | undefined {
+  if (!body || typeof body !== 'object') {
+    return undefined;
+  }
+  const { error } = body as { error?: unknown };
+  if (error && typeof error === 'object') {
+    const nested = error as { name?: unknown };
+    if (typeof nested.name === 'string') {
+      return nested.name;
+    }
   }
   return undefined;
 }
