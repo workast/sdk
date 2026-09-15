@@ -1,12 +1,14 @@
 export { Workast, type WorkastAuth, type WorkastOptions } from './client.js';
 export { type RequestOptions } from './request.js';
 export {
+  AccountError,
   ApiError,
   AuthenticationError,
   NotFoundError,
   PermissionError,
   TimeoutError,
   ValidationError,
+  type AccountErrorReason,
 } from './errors.js';
 export type {
   ActivityBody,
