@@ -45,6 +45,7 @@ export type {
   Meetings,
   NewAttachment,
   Note,
+  NoteCreate,
   NoteDetail,
   NotePatch,
   NoteSearchQuery,

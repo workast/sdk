@@ -1,9 +1,24 @@
 import type { Workast } from '../client.js';
 import type { RequestOptions } from '../request.js';
-import type { Note, NoteDetail, NotePatch, NoteSearchQuery, Notes } from '../types/generated.js';
+import type { Note, NoteCreate, NoteDetail, NotePatch, NoteSearchQuery, Notes } from '../types/generated.js';
 
 export class NotesResource {
   constructor(private readonly client: Workast) {}
+
+  /**
+   * Create a note in a list.
+   * Requires one of: `note:create` (least privilege) or `note:manage`.
+   *
+   * @example
+   * const note = await workast.notes.create('list-id', {
+   *   title: 'Action Items',
+   *   summary: '',
+   *   content: '# Ship v3',
+   * });
+   */
+  create(listId: string, body: NoteCreate, options?: RequestOptions): Promise<NoteDetail> {
+    return this.client.request('POST', `/list/${encodeURIComponent(listId)}/note`, body, options);
+  }
 
   /**
    * List notes.
@@ -63,7 +78,7 @@ export class NotesResource {
    * Requires one of: `note:update` (least privilege) or `note:manage`.
    *
    * @example
-   * const note = await workast.notes.update('note-id', { title: 'Spec', version: 1, body: '<p>Hello</p>' });
+   * const note = await workast.notes.update('note-id', { title: 'Spec', content: '# Hello' });
    */
   update(noteId: string, body: NotePatch, options?: RequestOptions): Promise<Note> {
     return this.client.request('PATCH', `/note/${encodeURIComponent(noteId)}`, body, options);

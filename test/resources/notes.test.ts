@@ -1,6 +1,7 @@
 import { describe, expect, expectTypeOf, it } from 'vitest';
 import type {
   Note,
+  NoteCreate,
   NoteDetail,
   NotePatch,
   NoteSearchQuery,
@@ -10,8 +11,40 @@ import { DEFAULT_BASE_URL, getRequest, makeClient, mockFetch } from '../helpers.
 
 const noteId = 'note-1';
 const createdNote: Note = { id: noteId, title: 'Spec', version: 1 };
-const noteDetail: NoteDetail = { ...createdNote, body: '<p>Hello</p>' };
+const noteDetail: NoteDetail = { ...createdNote, content: '# Hello' };
 const listed: Notes = { total: 1, notes: [createdNote] };
+
+describe('notes.create', () => {
+  it('POSTs NoteCreate to /list/{listId}/note and returns NoteDetail', async () => {
+    const { client, fetch } = makeClient({ fetch: mockFetch(201, noteDetail) });
+    const body: NoteCreate = { title: 'Action Items', summary: '', content: '# Hello' };
+
+    const note = await client.notes.create('list-1', body);
+
+    const request = getRequest(fetch);
+    expect(request.method).toBe('POST');
+    expect(request.url).toBe(`${DEFAULT_BASE_URL}/list/list-1/note`);
+    expect(request.body).toEqual(body);
+    expect(request.headers.get('Authorization')).toBe('Bearer test-api-key');
+    expect(request.headers.get('Content-Type')).toBe('application/json');
+    expect(note).toEqual(noteDetail);
+  });
+
+  it('encodes the list id', async () => {
+    const { client, fetch } = makeClient({ fetch: mockFetch(201, noteDetail) });
+
+    await client.notes.create('list/weird', { title: 'Action Items', summary: '', content: '# Hello' });
+
+    expect(getRequest(fetch).url).toBe(`${DEFAULT_BASE_URL}/list/list%2Fweird/note`);
+  });
+
+  it('types create as (listId: string, body: NoteCreate) => Promise<NoteDetail>', () => {
+    const { client } = makeClient();
+    expectTypeOf(client.notes.create).parameter(0).toEqualTypeOf<string>();
+    expectTypeOf(client.notes.create).parameter(1).toEqualTypeOf<NoteCreate>();
+    expectTypeOf(client.notes.create).returns.toEqualTypeOf<Promise<NoteDetail>>();
+  });
+});
 
 describe('notes.list', () => {
   it('GETs /note with query and returns Notes', async () => {
@@ -81,7 +114,7 @@ describe('notes.retrieve', () => {
 describe('notes.update', () => {
   it('PATCHes NotePatch to /note/{noteId} and returns Note', async () => {
     const { client, fetch } = makeClient({ fetch: mockFetch(200, createdNote) });
-    const body: NotePatch = { title: 'Spec', version: 1, body: '<p>Hello</p>' };
+    const body: NotePatch = { title: 'Spec', content: '# Hello' };
 
     const note = await client.notes.update(noteId, body);
 
