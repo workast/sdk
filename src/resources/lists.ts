@@ -201,7 +201,7 @@ export class Lists {
    * Requires one of: `list:create` (least privilege) or `list:manage`.
    *
    * @example
-   * const list = await workast.lists.create({ name: 'Engineering' });
+   * const list = await workast.lists.create({ name: 'Engineering', readme: '# Welcome' });
    */
   create(body: ListCreate, options?: RequestOptions): Promise<List> {
     return this.client.request('POST', '/list', body, options);
