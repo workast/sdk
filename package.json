@@ -1,6 +1,6 @@
 {
   "name": "@workast/sdk",
-  "version": "3.4.0",
+  "version": "3.5.0",
   "description": "Workast SDK for JavaScript in the browser and Node.js",
   "type": "module",
   "main": "./dist/index.cjs",
