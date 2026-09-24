@@ -85,6 +85,25 @@ describe('lists.update', () => {
     expectTypeOf(client.lists.update).parameter(1).toEqualTypeOf<ListPatch>();
     expectTypeOf(client.lists.update).returns.toEqualTypeOf<Promise<void>>();
   });
+
+  it('sends readme plus version', async () => {
+    const { client, fetch } = makeClient({ fetch: mockFetch(204) });
+    const body: ListPatch = { readme: '# Welcome', version: 2 };
+
+    await client.lists.update('list-1', body);
+
+    const request = getRequest(fetch);
+    expect(request.method).toBe('PATCH');
+    expect(request.url).toBe(`${DEFAULT_BASE_URL}/list/list-1`);
+    expect(request.body).toEqual({ readme: '# Welcome', version: 2 });
+  });
+
+  it('types version as number | undefined', () => {
+    expectTypeOf<List['version']>().toEqualTypeOf<number | undefined>();
+    expectTypeOf<ListPatch['version']>().toEqualTypeOf<number | undefined>();
+    const list: List = { id: 'list-1', name: 'Engineering', readme: '# Welcome', version: 2 };
+    expectTypeOf(list).toEqualTypeOf<List>();
+  });
 });
 
 describe('lists.list', () => {

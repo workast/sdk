@@ -3,10 +3,10 @@ import type { RequestOptions } from '../request.js';
 import type {
   Meeting,
   MeetingCreate,
-  MeetingDetail,
   MeetingNotetakerEnable,
   MeetingPatch,
   MeetingRecordingResource,
+  MeetingResource,
   MeetingSearchQuery,
   Meetings,
 } from '../types/generated.js';
@@ -70,7 +70,7 @@ export class MeetingsResource {
    * @example
    * const meeting = await workast.meetings.retrieve('meeting-id');
    */
-  retrieve(meetingId: string, options?: RequestOptions): Promise<MeetingDetail> {
+  retrieve(meetingId: string, options?: RequestOptions): Promise<MeetingResource> {
     return this.client.request('GET', `/meeting/${encodeURIComponent(meetingId)}`, undefined, options);
   }
 
@@ -81,7 +81,7 @@ export class MeetingsResource {
    * @example
    * const meeting = await workast.meetings.update('meeting-id', { notes: 'Ship v3' });
    */
-  update(meetingId: string, body: MeetingPatch, options?: RequestOptions): Promise<MeetingDetail> {
+  update(meetingId: string, body: MeetingPatch, options?: RequestOptions): Promise<MeetingResource> {
     return this.client.request('PATCH', `/meeting/${encodeURIComponent(meetingId)}`, body, options);
   }
 
