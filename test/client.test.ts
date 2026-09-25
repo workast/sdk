@@ -49,10 +49,13 @@ describe('Workast constructor auth', () => {
     expect(() => new Workast({} as ConstructorParameters<typeof Workast>[0])).toThrow();
   });
 
-  it('throws when { apiKey } is used in a browser', () => {
+  it('{ apiKey } in a browser throws unless dangerouslyAllowBrowser is true', () => {
     vi.stubGlobal('window', {});
-    expect(() => new Workast({ apiKey: API_KEY })).toThrow();
-    expect(() => new Workast(API_KEY)).toThrow();
+    expect(() => new Workast({ apiKey: API_KEY })).toThrow(/Workast\.public/);
+    expect(() => new Workast({ apiKey: API_KEY })).toThrow(/dangerouslyAllowBrowser/);
+    expect(() => new Workast(API_KEY)).toThrow(/Workast\.public/);
+    expect(() => new Workast(API_KEY)).toThrow(/dangerouslyAllowBrowser/);
+    expect(() => new Workast({ apiKey: API_KEY, dangerouslyAllowBrowser: true })).not.toThrow();
   });
 
   it('does not throw when { token } is used in a browser', () => {

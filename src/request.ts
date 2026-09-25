@@ -1,4 +1,4 @@
-import { errorFromResponse, TimeoutError } from './errors.js';
+import { AuthenticationError, errorFromResponse, TimeoutError } from './errors.js';
 
 export interface RequestOptions {
   headers?: Record<string, string>;
@@ -12,6 +12,7 @@ export interface RequestContext {
   fetch: typeof fetch;
   timeout: number;
   resolveAuth(): Promise<string>;
+  onAuthenticationError?: () => void;
 }
 
 export function withoutAuthorization(
@@ -77,7 +78,11 @@ export async function request<T>(
         }
         errorBody = undefined;
       }
-      throw errorFromResponse(response.status, errorBody);
+      const error = errorFromResponse(response.status, errorBody);
+      if (error instanceof AuthenticationError) {
+        ctx.onAuthenticationError?.();
+      }
+      throw error;
     }
 
     if (response.status === 204) {
