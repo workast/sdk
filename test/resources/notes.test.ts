@@ -7,6 +7,7 @@ import type {
   NoteSearchQuery,
   Notes,
 } from '../../src/index.js';
+import { note } from '../../src/types/examples.js';
 import { DEFAULT_BASE_URL, getRequest, makeClient, mockFetch } from '../helpers.js';
 
 const noteId = 'note-1';
@@ -43,6 +44,35 @@ describe('notes.create', () => {
     expectTypeOf(client.notes.create).parameter(0).toEqualTypeOf<string>();
     expectTypeOf(client.notes.create).parameter(1).toEqualTypeOf<NoteCreate>();
     expectTypeOf(client.notes.create).returns.toEqualTypeOf<Promise<NoteDetail>>();
+  });
+
+  it('accepts a title-only body', async () => {
+    const { client, fetch } = makeClient({ fetch: mockFetch(201, noteDetail) });
+    const body: NoteCreate = { title: 'Action Items' };
+
+    await client.notes.create('list-1', body);
+
+    const request = getRequest(fetch);
+    expect(request.method).toBe('POST');
+    expect(request.url).toBe(`${DEFAULT_BASE_URL}/list/list-1/note`);
+    expect(request.body).toEqual({ title: 'Action Items' });
+    expect(request.headers.get('Authorization')).toBe('Bearer test-api-key');
+  });
+
+  it('types summary and content as optional', () => {
+    expectTypeOf<NoteCreate['summary']>().toEqualTypeOf<string | undefined>();
+    expectTypeOf<NoteCreate['content']>().toEqualTypeOf<string | undefined>();
+    expectTypeOf<NoteCreate['title']>().toEqualTypeOf<string>();
+  });
+});
+
+describe('Note', () => {
+  it('includes link', () => {
+    expectTypeOf<Note['link']>().toEqualTypeOf<string | undefined>();
+  });
+
+  it('exposes the swagger example link', () => {
+    expect(note.link).toBe('https://worka.st/67c6206fc7cb0feb115113cdf71aa72d/note/6994a3e051b10d097caddd0f');
   });
 });
 

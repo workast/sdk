@@ -1,4 +1,12 @@
-export { Workast, type WorkastAuth, type WorkastOptions } from './client.js';
+export {
+  Workast,
+  type AuthChangeEvent,
+  type AuthSession,
+  type AuthStatus,
+  type WorkastAuth,
+  type WorkastOptions,
+  type WorkastPublicOptions,
+} from './client.js';
 export { type RequestOptions } from './request.js';
 export {
   AccountError,
@@ -36,11 +44,11 @@ export type {
   Meeting,
   MeetingCreate,
   MeetingCreateEvent,
-  MeetingDetail,
   MeetingMinimalResource,
   MeetingNotetakerEnable,
   MeetingPatch,
   MeetingRecordingResource,
+  MeetingResource,
   MeetingSearchQuery,
   Meetings,
   NewAttachment,

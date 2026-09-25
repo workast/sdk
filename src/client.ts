@@ -1,3 +1,10 @@
+import {
+  PublicOAuth,
+  type AuthChangeEvent,
+  type AuthSession,
+  type AuthStatus,
+  type WorkastPublicOptions,
+} from './oauth.js';
 import { request, withoutAuthorization, type RequestOptions } from './request.js';
 import { Attachments } from './resources/attachments.js';
 import { CalendarResource } from './resources/calendar.js';
@@ -22,6 +29,7 @@ type WorkastConfig = {
   headers?: Record<string, string>;
   fetch?: typeof fetch;
   timeout?: number;
+  dangerouslyAllowBrowser?: boolean;
 };
 
 export type WorkastAuth =
@@ -30,6 +38,7 @@ export type WorkastAuth =
   | { getToken: () => string | Promise<string> };
 
 export type WorkastOptions = WorkastAuth & WorkastConfig;
+export type { AuthChangeEvent, AuthSession, AuthStatus, WorkastPublicOptions };
 
 export class Workast {
   readonly attachments: Attachments;
@@ -53,14 +62,19 @@ export class Workast {
   private readonly baseUrl: string;
   private readonly fetchFn: typeof fetch;
   private readonly timeout: number;
+  private readonly dangerouslyAllowBrowser: boolean;
   private headers: Record<string, string>;
+  private oauth?: PublicOAuth;
 
   constructor(options: string | WorkastOptions) {
     const opts: WorkastOptions = typeof options === 'string' ? { apiKey: options } : options;
     const passedApiKey = typeof options === 'string' || 'apiKey' in opts;
+    this.dangerouslyAllowBrowser = typeof options !== 'string' && Boolean(opts.dangerouslyAllowBrowser);
 
-    if (typeof window !== 'undefined' && passedApiKey) {
-      throw new Error('apiKey cannot be used in a browser. Use token or getToken instead.');
+    if (typeof window !== 'undefined' && passedApiKey && !this.dangerouslyAllowBrowser) {
+      throw new Error(
+        'apiKey cannot be used in a browser. Use Workast.public({ clientId }) on a page, or pass dangerouslyAllowBrowser: true.',
+      );
     }
 
     if ('getToken' in opts) {
@@ -93,14 +107,64 @@ export class Workast {
     this.workflows = new WorkflowsResource(this);
   }
 
+  static ['public'](options: WorkastPublicOptions): Workast {
+    if (typeof window === 'undefined') {
+      throw new Error('Workast.public can only be used in a browser');
+    }
+    const oauth = new PublicOAuth(options);
+    const client = new Workast({
+      getToken: () => oauth.resolveAuth(),
+      baseUrl: options.baseUrl,
+      fetch: options.fetch,
+      headers: options.headers,
+      timeout: options.timeout,
+    });
+    client.oauth = oauth;
+    return client;
+  }
+
+  get auth(): { status: AuthStatus; session: AuthSession | null; error: string | null } {
+    return {
+      status: this.oauth?.status ?? 'unauthenticated',
+      session: this.oauth?.session ?? null,
+      error: this.oauth?.error ?? null,
+    };
+  }
+
+  signIn(): Promise<void> {
+    if (!this.oauth) {
+      throw new Error('signIn() is only available on Workast.public clients');
+    }
+    return this.oauth.signIn();
+  }
+
+  signOut(): Promise<void> {
+    if (!this.oauth) {
+      throw new Error('signOut() is only available on Workast.public clients');
+    }
+    return this.oauth.signOut();
+  }
+
+  onAuthStateChange(
+    callback: (event: AuthChangeEvent, session: AuthSession | null) => void,
+  ): () => void {
+    if (!this.oauth) {
+      throw new Error('onAuthStateChange() is only available on Workast.public clients');
+    }
+    return this.oauth.onAuthStateChange(callback);
+  }
+
   withHeaders(headers: Record<string, string>): Workast {
-    return new Workast({
+    const clone = new Workast({
       ...this.authOptions(),
       baseUrl: this.baseUrl,
       fetch: this.fetchFn,
       timeout: this.timeout,
       headers: { ...this.headers, ...withoutAuthorization(headers) },
+      dangerouslyAllowBrowser: this.dangerouslyAllowBrowser,
     });
+    clone.oauth = this.oauth;
+    return clone;
   }
 
   setHeaders(headers: Record<string, string>): void {
@@ -112,12 +176,16 @@ export class Workast {
   }
 
   private context() {
+    const { oauth } = this;
     return {
       baseUrl: this.baseUrl,
       headers: this.headers,
       fetch: this.fetchFn,
       timeout: this.timeout,
       resolveAuth: () => this.resolveAuth(),
+      onAuthenticationError: oauth
+        ? () => oauth.handleAuthenticationError()
+        : undefined,
     };
   }
 

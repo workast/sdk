@@ -2,8 +2,8 @@ import { describe, expect, expectTypeOf, it } from 'vitest';
 import type {
   Meeting,
   MeetingCreate,
-  MeetingDetail,
   MeetingMinimalResource,
+  MeetingResource,
   MeetingNotetakerEnable,
   MeetingPatch,
   MeetingRecordingResource,
@@ -19,7 +19,7 @@ const organizer = {
   userName: 'ada',
   confirmed: true,
   avatar: 'https://cdn.workast.io/ada.png',
-  costCenter: { id: 'cc-1' },
+  costCenter: 'cc-1',
 };
 const list = {
   id: 'list-1',
@@ -41,7 +41,7 @@ const createdMeeting: Meeting = {
   isRecurrent: false,
   summary: 'Standup',
 };
-const meetingDetail: MeetingDetail = { ...createdMeeting, notes: 'Ship v3' };
+const meetingDetail: MeetingResource = { ...createdMeeting, notes: 'Ship v3' };
 const meetingMinimal: MeetingMinimalResource = {
   id: meetingId,
   organizer,
@@ -121,7 +121,7 @@ describe('meetings.createFromEvent', () => {
 });
 
 describe('meetings.retrieve', () => {
-  it('GETs /meeting/{meetingId} and returns MeetingDetail', async () => {
+  it('GETs /meeting/{meetingId} and returns MeetingResource', async () => {
     const { client, fetch } = makeClient({ fetch: mockFetch(200, meetingDetail) });
 
     const meeting = await client.meetings.retrieve(meetingId);
@@ -135,15 +135,15 @@ describe('meetings.retrieve', () => {
     expect(meeting).toEqual(meetingDetail);
   });
 
-  it('types retrieve as (meetingId: string) => Promise<MeetingDetail>', () => {
+  it('types retrieve as (meetingId: string) => Promise<MeetingResource>', () => {
     const { client } = makeClient();
     expectTypeOf(client.meetings.retrieve).parameter(0).toEqualTypeOf<string>();
-    expectTypeOf(client.meetings.retrieve).returns.toEqualTypeOf<Promise<MeetingDetail>>();
+    expectTypeOf(client.meetings.retrieve).returns.toEqualTypeOf<Promise<MeetingResource>>();
   });
 });
 
 describe('meetings.update', () => {
-  it('PATCHes MeetingPatch to /meeting/{meetingId} and returns MeetingDetail', async () => {
+  it('PATCHes MeetingPatch to /meeting/{meetingId} and returns MeetingResource', async () => {
     const { client, fetch } = makeClient({ fetch: mockFetch(200, meetingDetail) });
     const body: MeetingPatch = { notes: 'Ship v3' };
 
@@ -157,11 +157,11 @@ describe('meetings.update', () => {
     expect(meeting).toEqual(meetingDetail);
   });
 
-  it('types update as (meetingId: string, body: MeetingPatch) => Promise<MeetingDetail>', () => {
+  it('types update as (meetingId: string, body: MeetingPatch) => Promise<MeetingResource>', () => {
     const { client } = makeClient();
     expectTypeOf(client.meetings.update).parameter(0).toEqualTypeOf<string>();
     expectTypeOf(client.meetings.update).parameter(1).toEqualTypeOf<MeetingPatch>();
-    expectTypeOf(client.meetings.update).returns.toEqualTypeOf<Promise<MeetingDetail>>();
+    expectTypeOf(client.meetings.update).returns.toEqualTypeOf<Promise<MeetingResource>>();
   });
 });
 
