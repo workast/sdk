@@ -52,6 +52,7 @@ const QUERY_ALIAS_MAP = {
   'GET /user': 'UserSearchQuery',
   'GET /user/email/{email}': 'UserByEmailQuery',
   'GET /note': 'NoteSearchQuery',
+  'GET /form': 'FormSearchQuery',
   'GET /notification': 'NotificationSearchQuery',
 };
 

@@ -9,6 +9,7 @@ import { request, withoutAuthorization, type RequestOptions } from './request.js
 import { Attachments } from './resources/attachments.js';
 import { CalendarResource } from './resources/calendar.js';
 import { Fields } from './resources/fields.js';
+import { FormsResource } from './resources/forms.js';
 import { Lists } from './resources/lists.js';
 import { MeetingsResource } from './resources/meetings.js';
 import { NotesResource } from './resources/notes.js';
@@ -44,6 +45,7 @@ export class Workast {
   readonly attachments: Attachments;
   readonly calendar: CalendarResource;
   readonly fields: Fields;
+  readonly forms: FormsResource;
   readonly lists: Lists;
   readonly meetings: MeetingsResource;
   readonly notes: NotesResource;
@@ -94,6 +96,7 @@ export class Workast {
     this.attachments = new Attachments(this);
     this.calendar = new CalendarResource(this);
     this.fields = new Fields(this);
+    this.forms = new FormsResource(this);
     this.lists = new Lists(this);
     this.meetings = new MeetingsResource(this);
     this.notes = new NotesResource(this);
