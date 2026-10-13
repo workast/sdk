@@ -102,7 +102,7 @@ try {
 
 ## Resources
 
-`tasks` · `lists` · `fields` · `users` · `searches` · `tags` · `notes` · `notifications` · `meetings` · `calendar.events` · `workflows` · `reactions` · `attachments` · `tokens`
+`tasks` · `lists` · `fields` · `forms` · `users` · `searches` · `tags` · `notes` · `notifications` · `meetings` · `calendar.events` · `workflows` · `reactions` · `attachments` · `tokens`
 
 Methods use `create` / `retrieve` / `update` / `list` / `del`, plus domain verbs like `complete` and `assign`. Path ids first, body second, request options last. Types match the [API reference](https://developers.workast.com/).
 
