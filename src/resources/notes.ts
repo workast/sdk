@@ -34,7 +34,7 @@ export class NotesResource {
     }
     if (query?.lists) {
       for (const value of query.lists) {
-        params.append('lists', value);
+        params.append('lists[]', value);
       }
     }
     if (query?.title) {
@@ -42,7 +42,7 @@ export class NotesResource {
     }
     if (query?.owners) {
       for (const value of query.owners) {
-        params.append('owners', value);
+        params.append('owners[]', value);
       }
     }
     if (query?.sort) {
