@@ -94,11 +94,23 @@ describe('notes.list', () => {
     const request = getRequest(fetch);
     expect(request.method).toBe('GET');
     expect(request.url).toBe(
-      `${DEFAULT_BASE_URL}/note?showDeleted=true&lists=list-1&lists=list-2&title=Spec&owners=user-1&sort=-updatedAt&limit=10&skip=5`,
+      `${DEFAULT_BASE_URL}/note?showDeleted=true&lists%5B%5D=list-1&lists%5B%5D=list-2&title=Spec&owners%5B%5D=user-1&sort=-updatedAt&limit=10&skip=5`,
     );
     expect(request.body).toBeUndefined();
     expect(request.headers.get('Authorization')).toBe('Bearer test-api-key');
     expect(result).toEqual(listed);
+  });
+
+  it('GETs /note with one list id as an array', async () => {
+    const { client, fetch } = makeClient({ fetch: mockFetch(200, listed) });
+
+    await client.notes.list({ lists: ['list-1'] });
+
+    const request = getRequest(fetch);
+    expect(request.method).toBe('GET');
+    expect(request.url).toBe(`${DEFAULT_BASE_URL}/note?lists%5B%5D=list-1`);
+    expect(request.body).toBeUndefined();
+    expect(request.headers.get('Authorization')).toBe('Bearer test-api-key');
   });
 
   it('GETs /note without query', async () => {
